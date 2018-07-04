@@ -1,19 +1,24 @@
 'use strict';
 
 const superagent = require('superagent');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const app = require('../../../src/app.js');
+
+//allows us to use this mock
+jest.mock('../../../src/auth/model.js');
+
+const API_URL = 'http://localhost:8888';
 
 describe('Authentication Server', () => {
 
   const PORT = 8888;
   beforeAll( () => {
-    mongoose.connect('mongodb://localhost:27017/baseball');
+    // mongoose.connect('mongodb://localhost:27017/baseball');
     app.start(PORT);
   });
   afterAll( () => {
     app.stop();
-    mongoose.connection.close();
+    // mongoose.connection.close();
   });
 
   // Note that these will actually be using the mocked models
@@ -21,7 +26,7 @@ describe('Authentication Server', () => {
   // a mongo server to run these tests. (we don't want to test mongo anyway!)
 
   it('gets a 401 on a bad login', () => {
-    return superagent.get('http://localhost:8888/signin')
+    return superagent.get(API_URL)
       .then(response => {
       })
       .catch(response => {
@@ -30,7 +35,7 @@ describe('Authentication Server', () => {
   });
 
   it('gets a 401 on a bad login', () => {
-    return superagent.get('http://localhost:8888/signin')
+    return superagent.get(API_URL)
       .auth('foo','bar')
       .then(response => {
       })
@@ -40,12 +45,21 @@ describe('Authentication Server', () => {
   });
 
   it('gets a 200 on a good login', () => {
-    return superagent.get('http://localhost:8888/signin')
+    return superagent.get(API_URL + '/signin')
       .auth('john','foo')
       .then(response => {
         expect(response.statusCode).toEqual(200);
       })
       .catch(console.err);
+  });
+
+  it('should create a user on signup', () => {
+    return superagent.post(API_URL+'/API_URL')
+    .send({username:'john', password:'foo'})
+    .then(response => {
+      expect(response.statusCode.toBe(200));
+    })
+    .catch(console.err);
   });
 
 });
