@@ -48,6 +48,7 @@ export default (req, res, next) => {
 
     // BASIC Auth
     if(authHeader.match(/basic/i)) {
+      console.log('has auth header basic')
       // authHeader will have something like this in it:
       //   Basic ZnJlZDpzYW1wbGU=
 
